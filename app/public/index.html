@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="js/urls.js"></script>
+</head>
+<body ng-app="app">
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="js/index.js"></script>
+
+    <div ng-controller="AppCtrl">
+        <button type="button" ng-click="submit()">Go</button>
+        <div>
+            <ul>
+                <li ng-repeat="url in urls track by $index">
+                    <div><a ng-href="{{::url}}" target="_blank">{{::url}}</a></div>
+                    <div><a ng-href="{{paths[$index]}}" target="_blank">{{paths[$index]}}</a></div>
+                    <div>{{error[$index]}}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
