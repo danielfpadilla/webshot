@@ -11,6 +11,7 @@
 
     <div ng-controller="AppCtrl">
         <button type="button" ng-click="submit()">Go</button>
+        <label>{{done}} of {{total}}: {{done / total * 100}}%</label>
         <div>
             <ul>
                 <li ng-repeat="url in urls track by $index">
