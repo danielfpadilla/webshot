@@ -17,7 +17,7 @@ screenShotRoute = app.route('/screenshot');
 screenShotRoute.post(function(req, res) {
     var body = req.body,
         url = body.url,
-        filename = body.filename,
+        filename = body.filename + '',
         opt = {
             shotSize: {
                 width: 1024,
@@ -25,7 +25,7 @@ screenShotRoute.post(function(req, res) {
             }
         };
 
-    if (url && filename) {
+    if (url && filename.length > 0) {
         filename = 'files/' + filename + '.png';
 
         webshot(url, 'public/' + filename, opt, function(err) {
