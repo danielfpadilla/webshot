@@ -14,8 +14,8 @@
         <label>{{done}} of {{total}}: {{done / total * 100}}%</label>
         <div>
             <ul>
-                <li ng-repeat="url in urls track by $index">
-                    <div><a ng-href="{{::url}}" target="_blank">{{::url}}</a></div>
+                <li ng-repeat="item in urls">
+                    <div><a ng-href="{{::item.url}}" target="_blank">{{::item.url}}</a></div>
                     <div><a ng-href="{{paths[$index]}}" target="_blank">{{paths[$index]}}</a></div>
                     <div>{{error[$index]}}</div>
                 </li>

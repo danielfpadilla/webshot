@@ -11,58 +11,75 @@ angular.module('app', [])
              function($scope,
                       $http,
                       $timeout){
+    var notFound = [],
+        i = 0,
+        tryAgain = function () {
+            var urls = angular.copy(notFound),
+                size = notFound.length;
+            i = 0;
+
+            notFound = [];
+
+            start(urls, size);
+        };
+
     function start (urls, size) {
-        var notFound = {},
-            notFoundSize = 0,
-            done = 0,
-            tryAgain = function () {
-                start(notFound, notFoundSize);
-            };
+        $http.post('/screenshot', {
+                    url: urls[i].url,
+                    filename: urls[i].index
+            })
+            .then(function (result) {
+                $scope.paths[urls[i].index] = result.data;
+                i++;
+                $scope.done++;
 
-        for (var i in urls) {
-            (function (i) {
-                $timeout(function() {
-                    $http.post('/screenshot', {
-                            url: urls[i],
-                            filename: i
-                        })
-                        .then(function (result) {
-                            $scope.paths[i] = result.data;
+                if (i == size) {
+                    tryAgain();
+                } else if (i < size) {
+                    start(urls, urls.length);
+                }
+            })
+            .catch(function (error) {
 
-                            done++;
+                notFound.push(urls[i]);
 
-                            $scope.done++;
+                $scope.error[urls[i].index]
+                    = error.status + ':' + error.statusText;
 
-                            if (done == size) {
-                                tryAgain();
-                            }
-                        })
-                        .catch(function (error) {
-                            done++;
+                i++;
 
-                            $scope.done++;
-
-                            notFound[i] = urls[i];
-                            notFoundSize++;
-
-                            $scope.error[i] = error.status + ':' + error.statusText;
-
-                            if (done == size) {
-                                tryAgain();
-                            }
-                        });
-                }, 1000);
-            })(i);
-        }
+                if (i == size) {
+                    tryAgain();
+                } else if (i < size) {
+                    start(urls, urls.length);
+                }
+            });
     }
 
-    $scope.urls = window.siteUrls ? siteUrls: ['www.google.com'];
+    function toArrayObj (urls) {
+        var arr = [],
+            size = urls.length,
+            x;
+
+        for (x = 0; x < size; x++) {
+            arr.push({
+                index: x,
+                url: urls[x]
+            });
+        }
+
+        return arr;
+    }
+
     $scope.paths = {};
     $scope.error = {};
-    $scope.total = $scope.urls.length;
     $scope.done = 0;
+    $scope.urls = toArrayObj(window.siteUrls ? siteUrls: ['www.google.com']);
+    $scope.total = $scope.urls.length;
 
     $scope.submit = function () {
-        start($scope.urls, $scope.urls.length);
+        $timeout(function () {
+            start($scope.urls, $scope.urls.length);
+        }, 1000);
     };
 }]);
